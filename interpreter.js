@@ -1,5 +1,7 @@
 let grid = [];
+let instructions = [];
 let robot;
+let w;
 
 function mapFileSelected(file) {
     grid = []; //Clearing map matrix
@@ -51,9 +53,28 @@ function mapFileSelected(file) {
                 }
                 str_i++;
             }
-            console.log(robot);
         } else {
             console.log('The selected map file is not compatible.');
+        }
+    }
+}
+
+function drawGrid() {
+    background(255);
+    for ( let i = 0; i < grid.length;i++) {
+        for ( let j = 0; j < grid[0].length;j++) {
+            if (grid[i][j] === 'M') {
+                fill('red');
+            } else if (grid[i][j] === 'C') {
+                fill('yellow');
+            } else if (grid[i][j] === '^' || grid[i][j] === '>' || grid[i][j] === 'v' || grid[i][j] === '<') {
+                fill('blue');
+            } else if (grid[i][j] == 'O') {
+                fill('gray');
+            } else {
+                fill(255);
+            }
+            rect(j * w, i * w, w-1, w-1);
         }
     }
 }
@@ -62,14 +83,67 @@ function srcFileSelected(file) {
     if (file.type !== 'text') {
         console.log('The selected file must be a text file.');
     } else {
-        
+        //I need to refactor this code to improve its readablilty (if thats a word)
+        instructions = file.data.split('\n');
+        for (let i = 0; i < instructions.length;i++) {
+            let instData = instructions[i].split(' ');
+            if (instData[0] === 'Mov') {
+                grid[robot.y_coor][robot.x_coor] = '.';
+                robot.move(Number(instData[1]));
+                
+                grid[robot.y_coor][robot.x_coor] = '^';
+            } else if (instData[0] === 'Gir') {
+                robot.rotate(Number(instData[1]));
+            } else if (instData[0] === 'Car') {
+                switch (robot.dir) {
+                    case 'UP':
+                        grid[robot.y_coor - 1][robot.x_coor] = '.';
+                        break;
+                    case 'RT':
+                        grid[robot.y_coor][robot.x_coor + 1] = '.';
+                        break;
+                    case 'DN':
+                        grid[robot.y_coor + 1][robot.x_coor] = '.';
+                        break;
+                    case 'LT':
+                        grid[robot.y_coor][robot.x_coor - 1] = '.';
+                        break;
+                }
+            } else if (instData[0] === 'Dcar') {
+                switch (robot.dir) {
+                    case 'UP':
+                        grid[robot.y_coor - 1][robot.x_coor] = 'C';
+                        break;
+                    case 'RT':
+                        grid[robot.y_coor][robot.x_coor + 1] = 'C';
+                        break;
+                    case 'DN':
+                        grid[robot.y_coor + 1][robot.x_coor] = 'C';
+                        break;
+                    case 'LT':
+                        grid[robot.y_coor][robot.x_coor - 1] = 'C';
+                        break;
+                }
+            }
+        }
     }
 }
 
 function setup() {
-    noCanvas();
-    let label = createElement('label', 'Load map file');
+    //All this is temporal
+    createCanvas(1000, 1000);
+    w = 40;
+    let mapLabel = createElement('label', 'Load map file');
     let mapSelect = createFileInput(mapFileSelected);
-    label.child(mapSelect);
+    mapLabel.child(mapSelect);
     mapSelect.hide();
+    let codeLabel = createElement('label', 'Load instruction file');
+    let codeSelect = createFileInput(srcFileSelected);
+    codeLabel.child(codeSelect);
+    codeSelect.hide();
+}
+
+function draw() {
+    if (grid.length > 0) 
+        drawGrid();
 }
