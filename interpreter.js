@@ -1,7 +1,10 @@
 let grid = [];
 let instructions = [];
 let robot;
+let memory;
 let w;
+let tags = [];
+let tagIndex = [];
 
 function mapFileSelected(file) {
     grid = []; //Clearing map matrix
@@ -79,67 +82,303 @@ function drawGrid() {
     }
 }
 
-function exec(instruction) {
+function sensors(objective) {
+    let obX, obY;
+    switch (robot.dir) {
+        case 'UP':
+            obX = robot.x_coor;
+            obY = robot.y_coor - 1;
+            break;
+        case 'RT':
+            obX = robot.x_coor + 1;
+            obY = robot.y_coor;
+            break;
+        case 'DN':
+            obX = robot.x_coor;
+            obY = robot.y_coor + 1;
+            break;
+        case 'LT':
+            obX = robot.x_coor - 1;
+            obY = robot.y_coor;
+            break;
+    }
 
-    instruction.replace('\t', ' ');
-    let instData = instruction.split(' ');
-
-    console.log(instData);
-
-    /*if (instData[0] === 'Mov') {
-        grid[robot.y_coor][robot.x_coor] = '.';
-        robot.move(Number(instData[1]));
-
-        grid[robot.y_coor][robot.x_coor] = '^';
-    } else if (instData[0] === 'Gir') {
-        robot.rotate(Number(instData[1]));
-    } else if (instData[0] === 'Car') {
-        switch (robot.dir) {
-            case 'UP':
-                grid[robot.y_coor - 1][robot.x_coor] = '.';
-                break;
-            case 'RT':
-                grid[robot.y_coor][robot.x_coor + 1] = '.';
-                break;
-            case 'DN':
-                grid[robot.y_coor + 1][robot.x_coor] = '.';
-                break;
-            case 'LT':
-                grid[robot.y_coor][robot.x_coor - 1] = '.';
-                break;
-        }
-    } else if (instData[0] === 'Dcar') {
-        switch (robot.dir) {
-            case 'UP':
-                grid[robot.y_coor - 1][robot.x_coor] = 'C';
-                break;
-            case 'RT':
-                grid[robot.y_coor][robot.x_coor + 1] = 'C';
-                break;
-            case 'DN':
-                grid[robot.y_coor + 1][robot.x_coor] = 'C';
-                break;
-            case 'LT':
-                grid[robot.y_coor][robot.x_coor - 1] = 'C';
-                break;
-        }
-    }*/
+    if (objective === 'O' && (obY < 0 || obY >= grid.length || obX < 0 || obX >= grid[0].length)) {
+        return 0;
+    }
+    return grid[obY][obX] === objective ? 1 : 0;
 }
 
-function srcFileSelected(file) {
+function exec(instruction, lineno) {
+    let success = true;
+
+    instruction = instruction.replace(/\t/g, ' ');
+    let instData = instruction.split(' ');
+
+    instData = instData.filter((elem) => {
+        return elem !== "";
+    });
+
+    if (instData.length <= 4) {
+        let label;
+
+        if (instData[0].includes('.')) {
+            label = instData[0];
+            instData = instData.slice(1);
+        }
+
+        switch (instData[0]) {
+            //Memory instructions
+            case 'SetT':
+                success = memory.SetT(instData[1],instData[2]);
+                break;
+            case 'Copy':
+                success = memory.Copy(instData[1],instData[2]);
+                break;
+            case 'Put':
+                success = memory.Put(instData[1]);
+                break;
+            case 'Take':
+                success = memory.Take(instData[1]);
+                break;
+
+            //Arithmetic instructions
+            case 'Sum':
+                success = memory.Sum(instData[1],instData[2]);
+                break;
+            case 'Res':
+                success = memory.Res(instData[1],instData[2]);
+                break;
+            case 'Mul':
+                success = memory.Mult(instData[1],instData[2]);
+                break;
+            case 'Div':
+                success = memory.Div(instData[1],instData[2]);
+                break;
+
+            //Flow control instructions
+            case 'Vaya':
+                console.log(lineno);
+                lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                console.log(lineno);
+                break;
+            case 'Comp':
+                let retTuple = memory.Comp(instData[1], instData[2]);
+                success = retTuple['success'];
+                memory.SetT('TF', retTuple['comp']);
+                break;
+            case 'Vig':
+                if (memory.registers['TF'] === 0) {
+                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                } else {
+                    success = false;
+                }
+                break;
+            case 'Vnig':
+                if (memory.registers['TF'] !== 0) {
+                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                } else {
+                    success = false;
+                }
+                break;
+            case 'Vma':
+                if (memory.registers['TF'] === 1) {
+                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                } else {
+                    success = false;
+                }
+                break;
+            case 'Vmai':
+                if (memory.registers['TF'] >= 0) {
+                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                } else {
+                    success = false;
+                }
+                break;
+            case 'Vme':
+                if (memory.registers['TF'] === -1) {
+                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                } else {
+                    success = false;
+                }
+                break;
+            case 'Vmei':
+                if (memory.registers['TF'] <= 0) {
+                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                } else {
+                    success = false;
+                }
+                break;
+            
+            //Action instructions
+            case 'Mov':
+                if (memory.getRegister(instData[1])) {
+                    if (sensors('O')) {
+                        grid[robot.y_coor][robot.x_coor] = '.';
+                        robot.move(memory.registers[instData[1]]);
+                    } else {
+                        console.log('Error: the robot can\'t move to that position.');
+                        success = false;
+                    }
+                } else if (!isNaN(instData[1])) {
+                    if (sensors('O')) {
+                        grid[robot.y_coor][robot.x_coor] = '.';
+                        robot.move(Number(instData[1]));
+                    } else {
+                        console.log('Error: the robot can\'t move to that position.');
+                        success = false;
+                    }
+                } else {
+                    console.log('Invalid value.');
+                    success = false;
+                }
+                grid[robot.y_coor][robot.x_coor] = '^';
+                break;
+            case 'Gir':
+                robot.rotate(Number(instData[1]));
+                break;
+            case 'Car':
+                if (sensors('C')) {
+                    robot.is_loaded = true;
+                    
+                    switch (robot.dir) {
+                        case 'UP':
+                            grid[robot.y_coor - 1][robot.x_coor] = '.';
+                            break;
+                        case 'RT':
+                            grid[robot.y_coor][robot.x_coor + 1] = '.';
+                            break;
+                        case 'DN':
+                            grid[robot.y_coor + 1][robot.x_coor] = '.';
+                            break;
+                        case 'LT':
+                            grid[robot.y_coor][robot.x_coor - 1] = '.';
+                            break;
+                    }
+                } else {
+                    success = false;
+                }
+                break;
+            case 'Dcar':
+                if (sensors('M')) {
+                    switch (robot.dir) {
+                        case 'UP':
+                            grid[robot.y_coor - 1][robot.x_coor] = 'C';
+                            break;
+                        case 'RT':
+                            grid[robot.y_coor][robot.x_coor + 1] = 'C';
+                            break;
+                        case 'DN':
+                            grid[robot.y_coor + 1][robot.x_coor] = 'C';
+                            break;
+                        case 'LT':
+                            grid[robot.y_coor][robot.x_coor - 1] = 'C';
+                            break;
+                    }
+                } else {
+                    success = false;
+                }
+                break;
+
+            //Sensor instructions
+            case 'ObPX':
+                success = memory.SetT(instData[1], robot.x_coor);
+                break;
+            case 'ObPY':
+                success = memory.SetT(instData[1], robot.y_coor);
+                break;
+            case 'ObRT':
+                success = memory.SetT(instData[1], robot.dirs.indexOf(robot.dir) + 1);
+                break;
+            case 'ObOb':
+                success = memory.SetT(instData[1], sensors('O'));
+                break;
+            case 'ObMe':
+                success = memory.SetT(instData[1], sensors('C'));
+                break;
+            case 'ObDs':
+                success = memory.SetT(instData[1], sensors('M'));
+                break;
+            case 'ObCr':
+                success = memory.SetT(instData[1], robot.is_loaded ? 1 : 0);
+                break;
+
+            //Outputs
+            case 'Log':
+                break;
+
+            
+            default:
+                success = false;
+                console.log('Invalid token in line: ' + (lineno + 1));
+                console.log(instData[0] + ' is not an instruction.');
+                break;
+        }
+    } else {
+        success = false;
+        console.log('Invalid token in line: ' + (lineno + 1));
+    }
+    
+    let memory_copy = memory;
+    console.log(memory_copy.registers);
+
+    return {'success': success, 'index': lineno};
+}
+
+function wait(time) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve();
+        }, time);
+    });
+}
+
+async function srcFileSelected(file) {
     if (file.type !== 'text') {
         console.log('The selected file must be a text file.');
     } else {
+        memory = new Memoria();
+        tags = [];
+        tagIndex = [];
         instructions = file.data.split('\n');
+        instructions = instructions.filter((elem) => {
+            return elem !== "";
+        });
+
         for (let i = 0; i < instructions.length;i++) {
-            exec(instructions[i]);
+            if (instructions[i].includes('.')) {
+                let tagName = instructions[i].slice(0, instructions[i].indexOf('.'));
+                if (tagName.length < 6) {
+                    tags.push(tagName);
+                    tagIndex.push(i);
+                } else {
+                    console.log(tageName + ' is not a valid tag name.');
+                    break;
+                }               
+            }
+        }
+
+        for (let i = 0; i < instructions.length;i++) {
+            if (instructions[i][0] !== '/') {
+                let retTuple = exec(instructions[i], i);
+                i = retTuple['index'];
+                if (!retTuple['success']) {
+                    console.log("Stopping execution.");
+                    i = instructions.length;
+                }
+            }
+            await wait(500);
         }
     }
 }
 
+function preload() {
+    memory = new Memoria();
+}
+
 function setup() {
     //All this is temporal
-    createCanvas(1000, 1000);
+    createCanvas(500, 500);
     w = 40;
     let mapLabel = createElement('label', 'Load map file');
     let mapSelect = createFileInput(mapFileSelected);
