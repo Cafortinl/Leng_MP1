@@ -82,6 +82,52 @@ function drawGrid() {
     }
 }
 
+function drawRobot() {
+    let rep;
+    switch (robot.dir) {
+        case 'UP':
+            rep = '^';
+            break;
+        case 'RT':
+            rep = '>';
+            break;
+        case 'DN':
+            rep = 'v';
+            break;
+        case 'LT':
+            rep = '<';
+            break;
+    }
+    grid[robot.y_coor][robot.x_coor] = rep;
+}
+
+function checkBoundaries() {
+    let obX, obY;
+    switch (robot.dir) {
+        case 'UP':
+            obX = robot.x_coor;
+            obY = robot.y_coor - 1;
+            break;
+        case 'RT':
+            obX = robot.x_coor + 1;
+            obY = robot.y_coor;
+            break;
+        case 'DN':
+            obX = robot.x_coor;
+            obY = robot.y_coor + 1;
+            break;
+        case 'LT':
+            obX = robot.x_coor - 1;
+            obY = robot.y_coor;
+            break;
+    }
+
+    if (obY < 0 || obY >= grid.length || obX < 0 || obX >= grid[0].length) {
+        return false;
+    }
+    return true;
+}
+
 function sensors(objective) {
     let obX, obY;
     switch (robot.dir) {
@@ -103,9 +149,6 @@ function sensors(objective) {
             break;
     }
 
-    if (objective === 'O' && (obY < 0 || obY >= grid.length || obX < 0 || obX >= grid[0].length)) {
-        return 0;
-    }
     return grid[obY][obX] === objective ? 1 : 0;
 }
 
@@ -120,10 +163,8 @@ function exec(instruction, lineno) {
     });
 
     if (instData.length <= 4) {
-        let label;
 
         if (instData[0].includes('.')) {
-            label = instData[0];
             instData = instData.slice(1);
         }
 
@@ -212,18 +253,20 @@ function exec(instruction, lineno) {
             
             //Action instructions
             case 'Mov':
-                if (memory.getRegister(instData[1])) {
-                    if (sensors('O')) {
+                if (memory.getRegister(instData[1], false)) {
+                    if (checkBoundaries() && sensors('O') !== 1) {
                         grid[robot.y_coor][robot.x_coor] = '.';
                         robot.move(memory.registers[instData[1]]);
+                        drawRobot();
                     } else {
                         console.log('Error: the robot can\'t move to that position.');
                         success = false;
                     }
                 } else if (!isNaN(instData[1])) {
-                    if (sensors('O')) {
+                    if (checkBoundaries() && sensors('O') !== 1) {
                         grid[robot.y_coor][robot.x_coor] = '.';
                         robot.move(Number(instData[1]));
+                        drawRobot();
                     } else {
                         console.log('Error: the robot can\'t move to that position.');
                         success = false;
@@ -232,13 +275,19 @@ function exec(instruction, lineno) {
                     console.log('Invalid value.');
                     success = false;
                 }
-                grid[robot.y_coor][robot.x_coor] = '^';
                 break;
             case 'Gir':
-                robot.rotate(Number(instData[1]));
+                if (memory.getRegister(instData[1], false)) {
+                    robot.rotate(memory.registers[instData[1]]);
+                } else if (!isNaN(instData[1])) {
+                    robot.rotate(Number(instData[1]));
+                } else {
+                    console.log('Invalid value.');
+                    success = false;
+                }
                 break;
             case 'Car':
-                if (sensors('C')) {
+                if (checkBoundaries() && sensors('C')) {
                     robot.is_loaded = true;
                     
                     switch (robot.dir) {
@@ -256,11 +305,12 @@ function exec(instruction, lineno) {
                             break;
                     }
                 } else {
+                    console.log('There is no object to load.');
                     success = false;
                 }
                 break;
             case 'Dcar':
-                if (sensors('M')) {
+                if (checkBoundaries() && sensors('M')) {
                     switch (robot.dir) {
                         case 'UP':
                             grid[robot.y_coor - 1][robot.x_coor] = 'C';
@@ -276,6 +326,7 @@ function exec(instruction, lineno) {
                             break;
                     }
                 } else {
+                    console.log('Cannot unload robot in this place.');
                     success = false;
                 }
                 break;
@@ -291,13 +342,25 @@ function exec(instruction, lineno) {
                 success = memory.SetT(instData[1], robot.dirs.indexOf(robot.dir) + 1);
                 break;
             case 'ObOb':
-                success = memory.SetT(instData[1], sensors('O'));
+                if (checkBoundaries()) {
+                    success = memory.SetT(instData[1], sensors('O'));
+                } else {
+                    console.log("Alert: checking out of bounds. Register not affected.");
+                }
                 break;
             case 'ObMe':
-                success = memory.SetT(instData[1], sensors('C'));
+                if (checkBoundaries()) {
+                    success = memory.SetT(instData[1], sensors('C'));
+                } else {
+                    console.log("Alert: checking out of bounds. Register not affected.");
+                }
                 break;
             case 'ObDs':
-                success = memory.SetT(instData[1], sensors('M'));
+                if (checkBoundaries()) {
+                    success = memory.SetT(instData[1], sensors('M'));
+                } else {
+                    console.log("Alert: checking out of bounds. Register not affected.");
+                }
                 break;
             case 'ObCr':
                 success = memory.SetT(instData[1], robot.is_loaded ? 1 : 0);
@@ -318,9 +381,6 @@ function exec(instruction, lineno) {
         success = false;
         console.log('Invalid token in line: ' + (lineno + 1));
     }
-    
-    let memory_copy = memory;
-    console.log(memory_copy.registers);
 
     return {'success': success, 'index': lineno};
 }

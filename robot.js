@@ -28,6 +28,8 @@ class Robot {
 
     //Rotates the robot 90 degrees
     rotate(angle) {
+        angle = angle > 0 ? 1 : -1;
+
         //this.dirs.indexOf(this.dir) + angle gives the new index relative to the original position
         //the + this.dirs.length corrects for negative values
         //the % this.dirs.length makes it so the array works as a circular array

@@ -51,11 +51,13 @@ class Memoria{
         return this.stack[this.stack.length -1 ];
     }
 
-    getRegister(dest) {        
+    getRegister(dest, showMsg) {        
         if(this.validation.test(dest)){
             return this.registers[dest];
         } else {
-            console.log('Invalid register.');
+            if (showMsg){
+                console.log('Invalid register.');
+            }
             return false;
         }
     }
