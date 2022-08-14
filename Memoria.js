@@ -1,49 +1,79 @@
-class Stack{
+class Memoria{
     constructor(){
-        this.stack=[];
+        this.stack=[];        
+        this.registers = { TF: 0, T0: 0, T1: 0, T2: 0, T3: 0, T4: 0, T5: 0, T6: 0, T7: 0 };
+    }
+    
+    Put(element){
+        let validation = new RegExp('T(F|[0-7])');
+        if (validation.test(dest)) {
+            this.stack.push(this.registers[element]);
+        } else {
+            this.stack.push(element);
+        }
     }
 
-    push(element){
-        if(this.size <= 8){
-            this.stack.push(element);
-        }else{
-            console.log("Pila llena");
+    SetT(dest, src){
+        let validation = new RegExp('T(F|[0-7])');
+        if (validation.test(dest)) {
+            this.registers[dest] = src;
+        } else {
+            console.log('Invalid destination.');
         }
-        return this.stack;
     }
-    SetT(element,at){
-        if(at <= 8){
-            this.stack[at] = element;
+
+    Copy(dest_A, dest_B){
+        let validation = new RegExp('T(F|[0-7])');
+        if (validation.test(dest_A) && validation.test(dest_B)) {
+            this.registers[dest_A] = this.registers[dest_B];
+        } else {
+            console.log('Invalid destination.');
         }
-        return this.stack;
     }
-    Copy(src,dest){
-        if(src <=8 && dest <= 8){
-            this.stack[dest] = this.stack[src];
+
+    Take(dest){
+        let validation = new RegExp('T(F|[0-7])');
+        if(validation.test(dest)){
+            this.registers[dest] = this.peek();
+            this.stack.pop();
         }
-        return this.stack;
-    }
-    pop(){
         return this.stack.pop();
     }
+
     peek(){
         return this.stack[this.stack.length -1 ];
     }
-    size(){
-        return this.stack.length;
-    }
-    print(){
-        console.log(this.stack);
-    }
-    take(dest){
-        var elemet = this.stack.peek();
-        this.stack.pop();
-        this.stack[dest]=elemet; 
 
+    getRegister(dest) {
+        let validation = new RegExp('T(F|[0-7])');
+        if(validation.test(dest)){
+            return this.registers[dest];
+        } else {
+            console.log('Invalid register.');
+        }
     }
-}
-class Memoria{
-    constructor(){
-        var pila = new Stack();
+    
+    Sum(dest,src){
+        if(validation.test(dest)){
+          this.SetT(dest,this.getRegister(dest)+src);  
+        }
+    }
+    
+    Res(dest,src){
+        if(validation.test(dest)){
+            this.SetT(dest,this.getRegister(dest)-src);  
+          }
+    }
+    
+    mult(dest,src){
+        if(validation.test(dest)){
+            this.SetT(dest,this.getRegister(dest)*src);  
+        }
+    }
+    
+    dic(dest,src){
+        if(validation.test(dest)){
+            this.SetT(dest,this.getRegister(dest)/src);  
+        }
     }
 }

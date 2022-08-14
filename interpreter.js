@@ -79,52 +79,60 @@ function drawGrid() {
     }
 }
 
+function exec(instruction) {
+
+    instruction.replace('\t', ' ');
+    let instData = instruction.split(' ');
+
+    console.log(instData);
+
+    /*if (instData[0] === 'Mov') {
+        grid[robot.y_coor][robot.x_coor] = '.';
+        robot.move(Number(instData[1]));
+
+        grid[robot.y_coor][robot.x_coor] = '^';
+    } else if (instData[0] === 'Gir') {
+        robot.rotate(Number(instData[1]));
+    } else if (instData[0] === 'Car') {
+        switch (robot.dir) {
+            case 'UP':
+                grid[robot.y_coor - 1][robot.x_coor] = '.';
+                break;
+            case 'RT':
+                grid[robot.y_coor][robot.x_coor + 1] = '.';
+                break;
+            case 'DN':
+                grid[robot.y_coor + 1][robot.x_coor] = '.';
+                break;
+            case 'LT':
+                grid[robot.y_coor][robot.x_coor - 1] = '.';
+                break;
+        }
+    } else if (instData[0] === 'Dcar') {
+        switch (robot.dir) {
+            case 'UP':
+                grid[robot.y_coor - 1][robot.x_coor] = 'C';
+                break;
+            case 'RT':
+                grid[robot.y_coor][robot.x_coor + 1] = 'C';
+                break;
+            case 'DN':
+                grid[robot.y_coor + 1][robot.x_coor] = 'C';
+                break;
+            case 'LT':
+                grid[robot.y_coor][robot.x_coor - 1] = 'C';
+                break;
+        }
+    }*/
+}
+
 function srcFileSelected(file) {
     if (file.type !== 'text') {
         console.log('The selected file must be a text file.');
     } else {
-        //I need to refactor this code to improve its readablilty (if thats a word)
         instructions = file.data.split('\n');
         for (let i = 0; i < instructions.length;i++) {
-            let instData = instructions[i].split(' ');
-            if (instData[0] === 'Mov') {
-                grid[robot.y_coor][robot.x_coor] = '.';
-                robot.move(Number(instData[1]));
-                
-                grid[robot.y_coor][robot.x_coor] = '^';
-            } else if (instData[0] === 'Gir') {
-                robot.rotate(Number(instData[1]));
-            } else if (instData[0] === 'Car') {
-                switch (robot.dir) {
-                    case 'UP':
-                        grid[robot.y_coor - 1][robot.x_coor] = '.';
-                        break;
-                    case 'RT':
-                        grid[robot.y_coor][robot.x_coor + 1] = '.';
-                        break;
-                    case 'DN':
-                        grid[robot.y_coor + 1][robot.x_coor] = '.';
-                        break;
-                    case 'LT':
-                        grid[robot.y_coor][robot.x_coor - 1] = '.';
-                        break;
-                }
-            } else if (instData[0] === 'Dcar') {
-                switch (robot.dir) {
-                    case 'UP':
-                        grid[robot.y_coor - 1][robot.x_coor] = 'C';
-                        break;
-                    case 'RT':
-                        grid[robot.y_coor][robot.x_coor + 1] = 'C';
-                        break;
-                    case 'DN':
-                        grid[robot.y_coor + 1][robot.x_coor] = 'C';
-                        break;
-                    case 'LT':
-                        grid[robot.y_coor][robot.x_coor - 1] = 'C';
-                        break;
-                }
-            }
+            exec(instructions[i]);
         }
     }
 }
