@@ -412,8 +412,8 @@ async function srcFileSelected(file) {
                     tags.push(tagName);
                     tagIndex.push(i);
                 } else {
-                    console.log(tageName + ' is not a valid tag name.');
-                    break;
+                    console.log(tagName + ' is not a valid tag name.');
+                    return;
                 }               
             }
         }
