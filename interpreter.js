@@ -211,43 +211,31 @@ function exec(instruction, lineno) {
             case 'Vig':
                 if (memory.registers['TF'] === 0) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
-                } else {
-                    success = false;
                 }
                 break;
             case 'Vnig':
                 if (memory.registers['TF'] !== 0) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
-                } else {
-                    success = false;
                 }
                 break;
             case 'Vma':
                 if (memory.registers['TF'] === 1) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
-                } else {
-                    success = false;
                 }
                 break;
             case 'Vmai':
                 if (memory.registers['TF'] >= 0) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
-                } else {
-                    success = false;
                 }
                 break;
             case 'Vme':
                 if (memory.registers['TF'] === -1) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
-                } else {
-                    success = false;
                 }
                 break;
             case 'Vmei':
                 if (memory.registers['TF'] <= 0) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
-                } else {
-                    success = false;
                 }
                 break;
             
