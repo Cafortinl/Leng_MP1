@@ -1,4 +1,4 @@
-class Memoria{
+class Memory{
     constructor(){
         this.stack=[];        
         this.registers = { TF: 0, T0: 0, T1: 0, T2: 0, T3: 0, T4: 0, T5: 0, T6: 0, T7: 0 };

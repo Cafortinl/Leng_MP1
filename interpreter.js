@@ -345,21 +345,24 @@ function exec(instruction, lineno) {
                 if (checkBoundaries()) {
                     success = memory.SetT(instData[1], sensors('O'));
                 } else {
-                    console.log("Alert: checking out of bounds. Register not affected.");
+                    console.log("Checking out of bounds.");
+                    success = false;
                 }
                 break;
             case 'ObMe':
                 if (checkBoundaries()) {
                     success = memory.SetT(instData[1], sensors('C'));
                 } else {
-                    console.log("Alert: checking out of bounds. Register not affected.");
+                    console.log("Checking out of bounds.");
+                    success = false;
                 }
                 break;
             case 'ObDs':
                 if (checkBoundaries()) {
                     success = memory.SetT(instData[1], sensors('M'));
                 } else {
-                    console.log("Alert: checking out of bounds. Register not affected.");
+                    console.log("Checking out of bounds.");
+                    success = false;
                 }
                 break;
             case 'ObCr':
@@ -397,7 +400,7 @@ async function srcFileSelected(file) {
     if (file.type !== 'text') {
         console.log('The selected file must be a text file.');
     } else {
-        memory = new Memoria();
+        memory = new Memory();
         tags = [];
         tagIndex = [];
         instructions = file.data.split('\n');
@@ -433,7 +436,7 @@ async function srcFileSelected(file) {
 }
 
 function preload() {
-    memory = new Memoria();
+    memory = new Memory();
 }
 
 function setup() {
