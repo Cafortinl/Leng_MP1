@@ -18,12 +18,12 @@ function mapFileSelected(file) {
     } else {
         let metaRegex = new RegExp('[0-9]+, *[0-9]+');
         let dimensions;
-        while(file.data[i] != '\n') {
+        while (file.data[i] != '\n') {
             metadata += file.data[i];
             i++;
         }
 
-        if (metaRegex.test(metadata)){
+        if (metaRegex.test(metadata)) {
 
             dimensions = metadata.match(metaRegex);
             dimensions = dimensions[0].split(',');
@@ -62,25 +62,7 @@ function mapFileSelected(file) {
     }
 }
 
-function drawGrid() {
-    background(255);
-    for ( let i = 0; i < grid.length;i++) {
-        for ( let j = 0; j < grid[0].length;j++) {
-            if (grid[i][j] === 'M') {
-                fill('red');
-            } else if (grid[i][j] === 'C') {
-                fill('yellow');
-            } else if (grid[i][j] === '^' || grid[i][j] === '>' || grid[i][j] === 'v' || grid[i][j] === '<') {
-                fill('blue');
-            } else if (grid[i][j] == 'O') {
-                fill('gray');
-            } else {
-                fill(255);
-            }
-            rect(j * w, i * w, w-1, w-1);
-        }
-    }
-}
+
 
 function drawRobot() {
     let rep;
@@ -171,10 +153,10 @@ function exec(instruction, lineno) {
         switch (instData[0]) {
             //Memory instructions
             case 'SetT':
-                success = memory.SetT(instData[1],instData[2]);
+                success = memory.SetT(instData[1], instData[2]);
                 break;
             case 'Copy':
-                success = memory.Copy(instData[1],instData[2]);
+                success = memory.Copy(instData[1], instData[2]);
                 break;
             case 'Put':
                 success = memory.Put(instData[1]);
@@ -185,16 +167,16 @@ function exec(instruction, lineno) {
 
             //Arithmetic instructions
             case 'Sum':
-                success = memory.Sum(instData[1],instData[2]);
+                success = memory.Sum(instData[1], instData[2]);
                 break;
             case 'Res':
-                success = memory.Res(instData[1],instData[2]);
+                success = memory.Res(instData[1], instData[2]);
                 break;
             case 'Mul':
-                success = memory.Mult(instData[1],instData[2]);
+                success = memory.Mult(instData[1], instData[2]);
                 break;
             case 'Div':
-                success = memory.Div(instData[1],instData[2]);
+                success = memory.Div(instData[1], instData[2]);
                 break;
 
             //Flow control instructions
@@ -238,7 +220,7 @@ function exec(instruction, lineno) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                 }
                 break;
-            
+
             //Action instructions
             case 'Mov':
                 if (memory.getRegister(instData[1], false)) {
@@ -277,7 +259,7 @@ function exec(instruction, lineno) {
             case 'Car':
                 if (checkBoundaries() && sensors('C')) {
                     robot.is_loaded = true;
-                    
+
                     switch (robot.dir) {
                         case 'UP':
                             grid[robot.y_coor - 1][robot.x_coor] = '.';
@@ -361,7 +343,7 @@ function exec(instruction, lineno) {
             case 'Log':
                 break;
 
-            
+
             default:
                 success = false;
                 console.log('Invalid token in line: ' + (lineno + 1));
@@ -373,7 +355,7 @@ function exec(instruction, lineno) {
         console.log('Invalid token in line: ' + (lineno + 1));
     }
 
-    return {'success': success, 'index': lineno};
+    return { 'success': success, 'index': lineno };
 }
 
 function wait(time) {
@@ -396,7 +378,7 @@ async function srcFileSelected(file) {
             return elem !== "";
         });
 
-        for (let i = 0; i < instructions.length;i++) {
+        for (let i = 0; i < instructions.length; i++) {
             if (instructions[i].includes('.')) {
                 let tagName = instructions[i].slice(0, instructions[i].indexOf('.'));
                 if (tagName.length < 6) {
@@ -405,11 +387,11 @@ async function srcFileSelected(file) {
                 } else {
                     console.log(tagName + ' is not a valid tag name.');
                     return;
-                }               
+                }
             }
         }
 
-        for (let i = 0; i < instructions.length;i++) {
+        for (let i = 0; i < instructions.length; i++) {
             if (instructions[i][0] !== '/') {
                 let retTuple = exec(instructions[i], i);
                 i = retTuple['index'];
@@ -423,25 +405,95 @@ async function srcFileSelected(file) {
     }
 }
 
-function preload() {
-    memory = new Memory();
+
+const gridScreen = (gs) => {
+    gs.w = (gs.displayWidth / 2) - 90;
+
+    gs.drawGrid = () => {
+        gs.background(255);
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] === 'M') {
+                    gs.fill('red');
+                } else if (grid[i][j] === 'C') {
+                    gs.fill('yellow');
+                } else if (grid[i][j] === '^' || grid[i][j] === '>' || grid[i][j] === 'v' || grid[i][j] === '<') {
+                    gs.fill('blue');
+                } else if (grid[i][j] == 'O') {
+                    gs.fill('gray');
+                } else {
+                    gs.fill(255);
+                }
+                gs.rect(j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
+            }
+        }
+    };
+
+    gs.preload = () => {
+        memory = new Memory();
+    };
+
+    gs.setup = () => {
+        gs.createCanvas(gs.windowWidth, gs.windowHeight - 90);
+
+        //Creating the bottom buttons
+        let mapButton = gs.createElement('label', 'Load map file');
+        let mapSelect = gs.createFileInput(mapFileSelected);
+        mapButton.child(mapSelect);
+        mapSelect.hide();
+
+        let codeButton = gs.createElement('label', 'Load instruction file');
+        let codeSelect = gs.createFileInput(srcFileSelected);
+        codeSelect.style('background-color:')
+        codeButton.child(codeSelect);
+        codeSelect.hide();
+
+        let autoplayButton = gs.createElement('label', 'Autorun');
+        autoplayButton.mouseClicked(testFunc);
+        
+        let nextInstructionButton = gs.createElement('label', ' Next ');
+    };
+
+    gs.draw = () => {
+        if (grid.length > 0)
+            gs.drawGrid();
+    };
+};
+
+function testFunc() {
+    console.log('oi');
 }
 
-function setup() {
-    //All this is temporal
-    createCanvas(500, 500);
-    w = 40;
-    let mapLabel = createElement('label', 'Load map file');
-    let mapSelect = createFileInput(mapFileSelected);
-    mapLabel.child(mapSelect);
-    mapSelect.hide();
-    let codeLabel = createElement('label', 'Load instruction file');
-    let codeSelect = createFileInput(srcFileSelected);
-    codeLabel.child(codeSelect);
-    codeSelect.hide();
-}
+const codeScreen = (cds) => {
+    cds.w = cds.displayWidth / 2;
+    cds.h = cds.displayHeight / 2;
+    cds.graphics;
 
-function draw() {
-    if (grid.length > 0) 
-        drawGrid();
-}
+    cds.setup = () => {
+        cds.graphics = cds.createGraphics(cds.windowWidth / 2, cds.windowHeight / 2);
+        
+    };
+
+    cds.draw = () => {
+        cds.graphics.background('black');
+        cds.graphics.fill('gray');
+        cds.graphics.rect(cds.w * 10, cds.w, 30, 30);
+        cds.graphics.show();
+    };
+    
+};
+
+const cosoleScreen = (cs) => {
+    cs.w = css.windowWidth / 2;
+    cs.h = css.windowHeight / 2;
+    cs.setup = () => {
+    
+    };
+    cs.draw = () =>{
+
+    };
+};
+
+
+let gScreen = new p5(gridScreen, 'grid_div');
+let cdScreen = new p5(codeScreen, 'code_div');
