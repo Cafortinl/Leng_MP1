@@ -2,9 +2,13 @@ let grid = [];
 let instructions = [];
 let robot;
 let memory;
-let w;
 let tags = [];
 let tagIndex = [];
+let logs = [];
+let instruction_index;
+let log_i;
+let logTA;
+let instTA;
 
 function mapFileSelected(file) {
     grid = []; //Clearing map matrix
@@ -14,6 +18,7 @@ function mapFileSelected(file) {
     let i = 0;
 
     if (file.type !== 'text') {
+        AddTetxtConsole('The selected file must be a text file.');
         console.log('The selected file must be a text file.');
     } else {
         let metaRegex = new RegExp('[0-9]+, *[0-9]+');
@@ -57,7 +62,7 @@ function mapFileSelected(file) {
                 str_i++;
             }
         } else {
-            console.log('The selected map file is not compatible.');
+            AddTetxtConsole('The selected map file is not compatible.');
         }
     }
 }
@@ -153,185 +158,347 @@ function exec(instruction, lineno) {
         switch (instData[0]) {
             //Memory instructions
             case 'SetT':
-                success = memory.SetT(instData[1], instData[2]);
+                if (instData.length < 4) {
+                    success = memory.SetT(instData[1], instData[2]);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for SetT function with " + instData.length + " arguments."); 
+                    console.log("No match for SetT function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'Copy':
-                success = memory.Copy(instData[1], instData[2]);
+                if (instData.length < 4) {
+                    success = memory.Copy(instData[1], instData[2]);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Copy function with " + instData.length + " arguments.");
+                    console.log("No match for Copy function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'Put':
-                success = memory.Put(instData[1]);
+                if (instData.length < 3) {
+                    success = memory.Put(instData[1]);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Put function with " + instData.length + " arguments.");
+                    console.log("No match for Put function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'Take':
-                success = memory.Take(instData[1]);
+                if (instData.length < 3) {
+                    success = memory.Take(instData[1]);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Take function with " + instData.length + " arguments.");
+                    console.log("No match for Take function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
 
             //Arithmetic instructions
             case 'Sum':
-                success = memory.Sum(instData[1], instData[2]);
+                if (instData.length < 4) {
+                    success = memory.Sum(instData[1], instData[2]);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Sum function with " + instData.length + " arguments.");
+                    console.log("No match for Sum function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'Res':
-                success = memory.Res(instData[1], instData[2]);
+                if (instData.length < 4) {
+                    success = memory.Res(instData[1], instData[2]);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Res function with " + instData.length + " arguments.");
+                    console.log("No match for Res function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'Mul':
-                success = memory.Mult(instData[1], instData[2]);
+                if (instData.length < 4) {
+                    success = memory.Mult(instData[1], instData[2]);
+                } else {
+                    console.log("Error in line " + lineno + ": " + "No match for Mul function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'Div':
-                success = memory.Div(instData[1], instData[2]);
+                if (instData.length < 4) {
+                    success = memory.Div(instData[1], instData[2]);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Div function with " + instData.length + " arguments.");
+                    console.log("No match for Div function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
 
             //Flow control instructions
             case 'Vaya':
-                console.log(lineno);
-                lineno = tagIndex[tags.indexOf(instData[1])] - 1;
-                console.log(lineno);
+                if (instData.length < 3) {
+                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vaya function with " + instData.length + " arguments.");
+                    console.log("No match for Vaya function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'Comp':
-                let retTuple = memory.Comp(instData[1], instData[2]);
-                success = retTuple['success'];
-                memory.SetT('TF', retTuple['comp']);
+                if (instData.length < 4) {
+                    let retTuple = memory.Comp(instData[1], instData[2]);
+                    success = retTuple['success'];
+                    memory.SetT('TF', retTuple['comp']);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Comp function with " + instData.length + " arguments.");
+                    console.log("No match for Comp function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'Vig':
-                if (memory.registers['TF'] === 0) {
-                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                if (instData.length < 3) {
+                    if (memory.registers['TF'] === 0) {
+                        lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                    }
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vig function with " + instData.length + " arguments.");
+                    console.log("No match for Vig function with " + instData.length + " arguments.");
+                    success = false;
                 }
                 break;
             case 'Vnig':
-                if (memory.registers['TF'] !== 0) {
-                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                if (instData.length < 3) {
+                    if (memory.registers['TF'] !== 0) {
+                        lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                    }
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vnig function with " + instData.length + " arguments.");
+                    console.log("No match for Vnig function with " + instData.length + " arguments.");
+                    success = false;
                 }
                 break;
             case 'Vma':
-                if (memory.registers['TF'] === 1) {
-                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                if (instData.length < 3) {
+                    if (memory.registers['TF'] === 1) {
+                        lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                    }
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vma function with " + instData.length + " arguments.");
+                    console.log("No match for Vma function with " + instData.length + " arguments.");
+                    success = false;
                 }
                 break;
             case 'Vmai':
-                if (memory.registers['TF'] >= 0) {
-                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                if (instData.length < 3) {
+                    if (memory.registers['TF'] >= 0) {
+                        lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                    }
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vmai function with " + instData.length + " arguments.");
+                    console.log("No match for Vmai function with " + instData.length + " arguments.");
+                    success = false;
                 }
                 break;
             case 'Vme':
-                if (memory.registers['TF'] === -1) {
-                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                if (instData.length < 3) {
+                    if (memory.registers['TF'] === -1) {
+                        lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                    }
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vme function with " + instData.length + " arguments.");
+                    console.log("No match for Vme function with " + instData.length + " arguments.");
+                    success = false;
                 }
                 break;
             case 'Vmei':
-                if (memory.registers['TF'] <= 0) {
-                    lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                if (instData.length < 3) {
+                    if (memory.registers['TF'] <= 0) {
+                        lineno = tagIndex[tags.indexOf(instData[1])] - 1;
+                    }
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vmei function with " + instData.length + " arguments.");
+                    console.log("No match for Vmei function with " + instData.length + " arguments.");
+                    success = false;
                 }
                 break;
 
             //Action instructions
             case 'Mov':
-                if (memory.getRegister(instData[1], false)) {
-                    if (checkBoundaries() && sensors('O') !== 1) {
-                        grid[robot.y_coor][robot.x_coor] = '.';
-                        robot.move(memory.registers[instData[1]]);
-                        drawRobot();
+                if (instData.length < 3) {
+                    if (memory.getRegister(instData[1], false)) {
+                        if (checkBoundaries() && sensors('O') !== 1) {
+                            grid[robot.y_coor][robot.x_coor] = '.';
+                            robot.move(memory.registers[instData[1]]);
+                            drawRobot();
+                        } else {
+                            AddTetxtConsole('Error: the robot can\'t move to that position.');
+                            console.log('Error: the robot can\'t move to that position.');
+                            success = false;
+                        }
+                    } else if (!isNaN(instData[1])) {
+                        if (checkBoundaries() && sensors('O') !== 1) {
+                            grid[robot.y_coor][robot.x_coor] = '.';
+                            robot.move(Number(instData[1]));
+                            drawRobot();
+                        } else {
+                            AddTetxtConsole('Error: the robot can\'t move to that position.');
+                            console.log('Error: the robot can\'t move to that position.');
+                            success = false;
+                        }
                     } else {
-                        console.log('Error: the robot can\'t move to that position.');
-                        success = false;
-                    }
-                } else if (!isNaN(instData[1])) {
-                    if (checkBoundaries() && sensors('O') !== 1) {
-                        grid[robot.y_coor][robot.x_coor] = '.';
-                        robot.move(Number(instData[1]));
-                        drawRobot();
-                    } else {
-                        console.log('Error: the robot can\'t move to that position.');
+                        AddTetxtConsole('Invalid value.');
+                        console.log('Invalid value.');
                         success = false;
                     }
                 } else {
-                    console.log('Invalid value.');
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Mov function with " + instData.length + " arguments.");
+                    console.log("No match for Mov function with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
             case 'Gir':
-                if (memory.getRegister(instData[1], false)) {
-                    robot.rotate(memory.registers[instData[1]]);
-                } else if (!isNaN(instData[1])) {
-                    robot.rotate(Number(instData[1]));
+                if (instData.length < 3) {
+                    if (memory.getRegister(instData[1], false)) {
+                        robot.rotate(memory.registers[instData[1]]);
+                    } else if (!isNaN(instData[1])) {
+                        robot.rotate(Number(instData[1]));
+                    } else {
+                        AddTetxtConsole('Invalid value.');
+                        console.log('Invalid value.');
+                        success = false;
+                    }
                 } else {
-                    console.log('Invalid value.');
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Gir instruction with " + instData.length + " arguments.");
+                    console.log("No match for Gir instruction with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
             case 'Car':
-                if (checkBoundaries() && sensors('C')) {
-                    robot.is_loaded = true;
+                if (instData.length < 2) {
+                    if (checkBoundaries() && sensors('C')) {
+                        robot.is_loaded = true;
 
-                    switch (robot.dir) {
-                        case 'UP':
-                            grid[robot.y_coor - 1][robot.x_coor] = '.';
-                            break;
-                        case 'RT':
-                            grid[robot.y_coor][robot.x_coor + 1] = '.';
-                            break;
-                        case 'DN':
-                            grid[robot.y_coor + 1][robot.x_coor] = '.';
-                            break;
-                        case 'LT':
-                            grid[robot.y_coor][robot.x_coor - 1] = '.';
-                            break;
+                        switch (robot.dir) {
+                            case 'UP':
+                                grid[robot.y_coor - 1][robot.x_coor] = '.';
+                                break;
+                            case 'RT':
+                                grid[robot.y_coor][robot.x_coor + 1] = '.';
+                                break;
+                            case 'DN':
+                                grid[robot.y_coor + 1][robot.x_coor] = '.';
+                                break;
+                            case 'LT':
+                                grid[robot.y_coor][robot.x_coor - 1] = '.';
+                                break;
+                        }
+                    } else {
+                        AddTetxtConsole("Error in line " + lineno + ": " + 'There is no object to load.');
+                        console.log('There is no object to load.');
+                        success = false;
                     }
                 } else {
-                    console.log('There is no object to load.');
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Car function with " + instData.length + " arguments.");
+                    console.log("No match for Car function with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
             case 'Dcar':
-                if (checkBoundaries() && sensors('M')) {
-                    switch (robot.dir) {
-                        case 'UP':
-                            grid[robot.y_coor - 1][robot.x_coor] = 'C';
-                            break;
-                        case 'RT':
-                            grid[robot.y_coor][robot.x_coor + 1] = 'C';
-                            break;
-                        case 'DN':
-                            grid[robot.y_coor + 1][robot.x_coor] = 'C';
-                            break;
-                        case 'LT':
-                            grid[robot.y_coor][robot.x_coor - 1] = 'C';
-                            break;
+                if (instData.length < 2) {
+                    if (checkBoundaries() && sensors('M')) {
+                        switch (robot.dir) {
+                            case 'UP':
+                                grid[robot.y_coor - 1][robot.x_coor] = 'C';
+                                break;
+                            case 'RT':
+                                grid[robot.y_coor][robot.x_coor + 1] = 'C';
+                                break;
+                            case 'DN':
+                                grid[robot.y_coor + 1][robot.x_coor] = 'C';
+                                break;
+                            case 'LT':
+                                grid[robot.y_coor][robot.x_coor - 1] = 'C';
+                                break;
+                        }
+                    } else {
+                        AddTetxtConsole("Error in line " + lineno + ": " + 'Cannot unload robot in this place.');
+                        console.log('Cannot unload robot in this place.');
+                        success = false;
                     }
                 } else {
-                    console.log('Cannot unload robot in this place.');
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Dcar function with " + instData.length + " arguments.");
+                    console.log("No match for Dcar function with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
 
             //Sensor instructions
             case 'ObPX':
-                success = memory.SetT(instData[1], robot.x_coor);
+                if (instData.length < 3) {
+                    success = memory.SetT(instData[1], robot.x_coor);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No mathc for ObPX function with " + instData.length + " arguments.");
+                    console.log("No mathc for ObPX function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'ObPY':
-                success = memory.SetT(instData[1], robot.y_coor);
+                if (instData.length < 3) {
+                    success = memory.SetT(instData[1], robot.y_coor);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No mathc for ObPY function with " + instData.length + " arguments.");
+                    console.log("No mathc for ObPY function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'ObRT':
-                success = memory.SetT(instData[1], robot.dirs.indexOf(robot.dir) + 1);
+                if (instData.length < 3) {
+                    success = memory.SetT(instData[1], robot.dirs.indexOf(robot.dir) + 1);
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No mathc for ObRT function with " + instData.length + " arguments.");
+                    console.log("No mathc for ObRT function with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
             case 'ObOb':
-                if (checkBoundaries()) {
-                    success = memory.SetT(instData[1], sensors('O'));
+                if (instData.length < 3) {
+                    if (checkBoundaries()) {
+                        success = memory.SetT(instData[1], sensors('O'));
+                    } else {
+                        AddTetxtConsole("Checking out of bounds.");
+                        console.log("Checking out of bounds.");
+                        success = false;
+                    }
                 } else {
-                    console.log("Checking out of bounds.");
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for ObOb function with " + instData.length + " arguments.");
+                    console.log("No match for ObOb function with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
             case 'ObMe':
-                if (checkBoundaries()) {
-                    success = memory.SetT(instData[1], sensors('C'));
+                if (instData.length < 3) {
+                    if (checkBoundaries()) {
+                        success = memory.SetT(instData[1], sensors('C'));
+                    } else {
+                        AddTetxtConsole("Checking out of bounds.");
+                        console.log("Checking out of bounds.");
+                        success = false;
+                    }
                 } else {
-                    console.log("Checking out of bounds.");
+                    AddTetxtConsole();
+                    console.log("Error in line " + lineno + ": " + "No match for ObMe function with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
             case 'ObDs':
-                if (checkBoundaries()) {
-                    success = memory.SetT(instData[1], sensors('M'));
+                if (instData.length < 3) {
+                    if (checkBoundaries()) {
+                        success = memory.SetT(instData[1], sensors('M'));
+                    } else {
+                        AddTetxtConsole("Checking out of bounds.");
+                        console.log("Checking out of bounds.");
+                        success = false;
+                    }
                 } else {
-                    console.log("Checking out of bounds.");
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for ObMe function with " + instData.length + " arguments.");
+                    console.log("No match for ObMe function with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
@@ -341,19 +508,39 @@ function exec(instruction, lineno) {
 
             //Outputs
             case 'Log':
+                if (instData.length < 2) {
+                    if (memory.getRegister(instData[1], false)) {
+                        AddTetxtConsole("Log: " + memory.registers[instData[1]]);
+                    } else if (!isNaN(instData[1])) {
+                        AddTetxtConsole("Log: " + Number(instData[1]));
+                    } else {
+                        AddTetxtConsole('Invalid value.');
+                        console.log('Invalid value.');
+                        success = false;
+                    }
+                } else {
+                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Log instruction with " + instData.length + " arguments.");
+                    console.log("No match for Gir instruction with " + instData.length + " arguments.");
+                    success = false;
+                }
                 break;
 
 
             default:
                 success = false;
+                AddTetxtConsole('Invalid token in line: ' + (lineno + 1));
                 console.log('Invalid token in line: ' + (lineno + 1));
+                AddTetxtConsole(instData[0] + ' is not an instruction.');
                 console.log(instData[0] + ' is not an instruction.');
                 break;
         }
     } else {
         success = false;
+        AddTetxtConsole('Invalid token in line: ' + (lineno + 1));
         console.log('Invalid token in line: ' + (lineno + 1));
     }
+
+    AddTetxtCode(instruction);
 
     return { 'success': success, 'index': lineno };
 }
@@ -366,16 +553,56 @@ function wait(time) {
     });
 }
 
-async function srcFileSelected(file) {
+async function autorun() {
+    for (instruction_index; instruction_index < instructions.length; instruction_index++) {
+        if (instructions[instruction_index][0] !== '/') {
+            let retTuple = exec(instructions[instruction_index], instruction_index);
+            instruction_index = retTuple['index'];
+            if (!retTuple['success']) {
+                AddTetxtConsole("Stopping execution.");
+                console.log("Stopping execution.");
+                instruction_index = instructions.length;
+            }
+        }
+        await wait(500);
+    }
+}
+
+function exec_next() {
+    if (instructions[instruction_index][0] !== '/') {
+        let retTuple = exec(instructions[instruction_index], instruction_index);
+        instruction_index = retTuple['index'];
+        if (!retTuple['success']) {
+            AddTetxtConsole("Stopping execution.");
+            console.log("Stopping execution.");
+            instruction_index = instructions.length;
+        }
+        instruction_index++;
+    }
+}
+
+function AddTetxtConsole(newline_added){
+    logTA.value +=newline_added+'\n' ;
+    
+}
+function  AddTetxtCode(linea_codigo) {
+    instTA.value += linea_codigo + '\n';
+}
+
+function srcFileSelected(file) {
     if (file.type !== 'text') {
+        AddTetxtConsole('The selected file must be a text file.');
         console.log('The selected file must be a text file.');
     } else {
         memory = new Memory();
         tags = [];
         tagIndex = [];
+        instruction_index = 0;
+        logTA.value = '';
+        instTA.value = '';
         instructions = file.data.split('\n');
         instructions = instructions.filter((elem) => {
-            return elem !== "";
+            return elem !== "" && elem !== '/';
         });
 
         for (let i = 0; i < instructions.length; i++) {
@@ -385,23 +612,15 @@ async function srcFileSelected(file) {
                     tags.push(tagName);
                     tagIndex.push(i);
                 } else {
+                    AddTetxtConsole(tagName + ' is not a valid tag name.');
                     console.log(tagName + ' is not a valid tag name.');
                     return;
                 }
             }
         }
 
-        for (let i = 0; i < instructions.length; i++) {
-            if (instructions[i][0] !== '/') {
-                let retTuple = exec(instructions[i], i);
-                i = retTuple['index'];
-                if (!retTuple['success']) {
-                    console.log("Stopping execution.");
-                    i = instructions.length;
-                }
-            }
-            await wait(500);
-        }
+        
+
     }
 }
 
@@ -410,7 +629,7 @@ const gridScreen = (gs) => {
     gs.w = (gs.displayWidth / 2) - 90;
 
     gs.drawGrid = () => {
-        gs.background(255);
+        gs.background(0);
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[0].length; j++) {
                 if (grid[i][j] === 'M') {
@@ -434,7 +653,13 @@ const gridScreen = (gs) => {
     };
 
     gs.setup = () => {
-        gs.createCanvas(gs.windowWidth, gs.windowHeight - 90);
+        logTA = document.getElementById('Console_Display');
+        instTA = document.getElementById('Code_Display');
+
+        logTA.value = '';
+        instTA.value = '';
+
+        gs.createCanvas(gs.windowWidth / 2, gs.windowHeight - 90);
 
         //Creating the bottom buttons
         let mapButton = gs.createElement('label', 'Load map file');
@@ -449,9 +674,10 @@ const gridScreen = (gs) => {
         codeSelect.hide();
 
         let autoplayButton = gs.createElement('label', 'Autorun');
-        autoplayButton.mouseClicked(testFunc);
+        autoplayButton.mouseClicked(autorun);
         
         let nextInstructionButton = gs.createElement('label', ' Next ');
+        nextInstructionButton.mouseClicked(exec_next);
     };
 
     gs.draw = () => {
@@ -460,40 +686,4 @@ const gridScreen = (gs) => {
     };
 };
 
-function testFunc() {
-    console.log('oi');
-}
-
-const codeScreen = (cds) => {
-    cds.w = cds.displayWidth / 2;
-    cds.h = cds.displayHeight / 2;
-    cds.graphics;
-
-    cds.setup = () => {
-        cds.graphics = cds.createGraphics(cds.windowWidth / 2, cds.windowHeight / 2);
-        
-    };
-
-    cds.draw = () => {
-        cds.graphics.background('black');
-        cds.graphics.fill('gray');
-        cds.graphics.rect(cds.w * 10, cds.w, 30, 30);
-        cds.graphics.show();
-    };
-    
-};
-
-const cosoleScreen = (cs) => {
-    cs.w = css.windowWidth / 2;
-    cs.h = css.windowHeight / 2;
-    cs.setup = () => {
-    
-    };
-    cs.draw = () =>{
-
-    };
-};
-
-
 let gScreen = new p5(gridScreen, 'grid_div');
-let cdScreen = new p5(codeScreen, 'code_div');

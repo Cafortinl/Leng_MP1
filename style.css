@@ -1,17 +1,29 @@
 #main_div {
     display: flex;
+    align-content: center;
+    display: flex;
+    background-color: #000;
 }
 
+.cavas{
+
+}
 input[type=file] {
     left: 0;
     top: 0;
     opacity: 0;
-    position: absolute;
+    position: relative;
     font-size: 90px;
 }
 
-
+#output_div{
+    flex: 1;
+}
+#grid_div{
+    flex: 1;
+}
 label{
+
     background-color: rgb(73, 84, 88);
     border: 3px solid #000;
     color: #000;
@@ -26,4 +38,23 @@ label{
 label:hover{
     color: #b1d4d1;
     background-color: blueviolet;
+}
+textarea{
+    overflow-y: scroll;
+    height: 100px;
+    resize: none;
+    height: 50vh;
+    width:50vw;
+    font-size: xx-large;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;;
+}
+#Code_Display{
+    background-color: #14677C;
+    color: #51DED4;
+
+}
+
+#Console_Display{
+    background-color: #282828;
+    color: #98971a;
 }
