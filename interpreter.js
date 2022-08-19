@@ -681,12 +681,15 @@ const gridScreen = (gs) => {
 
     gs.preload = () => {
         memory = new Memory();
-        for (let i = 0; i < 6; i++) {
-            robot_sprites[i] = gs.loadImage('assets/robot_'+i+'.png');
-        }
-        obstacle_sprite = gs.loadImage('assets/obstacle.png');
-        objective_sprite = gs.loadImage('assets/objective.png');
-        cargo_sprite = gs.loadImage('assets/cargo.png');
+        robot_sprites[0] = gs.loadImage('https://i.imgur.com/9h9pZ7f.png');
+        robot_sprites[1] = gs.loadImage('https://i.imgur.com/LgX3F8E.png');
+        robot_sprites[2] = gs.loadImage('https://i.imgur.com/3uETcuo.png');
+        robot_sprites[3] = gs.loadImage('https://i.imgur.com/IRqHEeY.png');
+        robot_sprites[4] = gs.loadImage('https://i.imgur.com/HLEpi5v.png');
+        robot_sprites[5] = gs.loadImage('https://i.imgur.com/8daZ1Jj.png');
+        obstacle_sprite = gs.loadImage('https://i.imgur.com/ifwy500.png');
+        objective_sprite = gs.loadImage('https://i.imgur.com/G4uwNGS.png');
+        cargo_sprite = gs.loadImage('https://i.imgur.com/n6OD4uk.png');
     };
 
     gs.setup = () => {
