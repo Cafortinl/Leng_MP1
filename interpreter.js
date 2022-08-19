@@ -10,6 +10,11 @@ let log_i;
 let logTA;
 let instTA;
 
+let robot_sprites = [];
+let cargo_sprite;
+let obstacle_sprite;
+let objective_sprite;
+
 function mapFileSelected(file) {
     grid = []; //Clearing map matrix
 
@@ -557,6 +562,24 @@ function wait(time) {
     });
 }
 
+function checkState() {
+    let m_count = 0;
+    for (let i = 0; i < grid.length; i++) {
+        for (let j = 0; j < grid[0].length; j++) {
+            if (grid[i][j] === 'M') {
+                m_count++;
+            }
+        }
+    }
+
+    if (m_count > 0) {
+        AddTetxtConsole("Failed program: the robot wasn't able to put all the cargo boxes in their respective objectives.");
+    } else {
+        AddTetxtConsole("Success: all the cargo boxes are in their objectives.");
+    }
+
+}
+
 async function autorun() {
     for (instruction_index; instruction_index < instructions.length; instruction_index++) {
         if (instructions[instruction_index][0] !== '/') {
@@ -570,18 +593,21 @@ async function autorun() {
         }
         await wait(0);
     }
+    checkState();
 }
 
 function exec_next() {
     if (instructions[instruction_index][0] !== '/') {
-        let retTuple = exec(instructions[instruction_index], instruction_index);
-        instruction_index = retTuple['index'];
-        if (!retTuple['success']) {
-            AddTetxtConsole("Stopping execution.");
-            console.log("Stopping execution.");
-            instruction_index = instructions.length;
+        if (instruction_index < instructions.length) {
+            let retTuple = exec(instructions[instruction_index], instruction_index);
+            instruction_index = retTuple['index'];
+            if (!retTuple['success']) {
+                AddTetxtConsole("Stopping execution.");
+                console.log("Stopping execution.");
+                instruction_index = instructions.length;
+            }
+            instruction_index++;
         }
-        instruction_index++;
     }
 }
 
@@ -590,6 +616,7 @@ function AddTetxtConsole(newline_added){
     
 }
 function  AddTetxtCode(linea_codigo) {
+    instTA.value = 'Current instruction:\n';
     instTA.value += linea_codigo + '\n';
 }
 
@@ -639,21 +666,27 @@ const gridScreen = (gs) => {
                 if (i === robot.y_coor && j === robot.x_coor) {
                     gs.fill('blue');
                 } else if (grid[i][j] === 'M') {
-                    gs.fill('red');
+                    gs.image(objective_sprite, j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
                 } else if (grid[i][j] === 'C') {
-                    gs.fill('yellow');
+                    gs.image(cargo_sprite, j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
                 } else if (grid[i][j] == 'O') {
-                    gs.fill('gray');
+                    gs.image(obstacle_sprite, j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
                 } else {
                     gs.fill(255);
+                    gs.rect(j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
                 }
-                gs.rect(j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
             }
         }
     };
 
     gs.preload = () => {
         memory = new Memory();
+        for (let i = 0; i < 6; i++) {
+            robot_sprites[i] = gs.loadImage('assets/robot_'+i+'.png');
+        }
+        obstacle_sprite = gs.loadImage('assets/obstacle.png');
+        objective_sprite = gs.loadImage('assets/objective.png');
+        cargo_sprite = gs.loadImage('assets/cargo.png');
     };
 
     gs.setup = () => {
