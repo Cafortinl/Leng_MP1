@@ -10,6 +10,8 @@ class Robot {
 
     //Moves the robot 1 space
     move(val) {
+    	val = val > 0 ? 1 : -1;
+    
         switch (this.dir) {
             case 'UP':
                 this.y_coor -= val;

@@ -85,7 +85,7 @@ function drawRobot() {
             rep = '<';
             break;
     }
-    grid[robot.y_coor][robot.x_coor] = rep;
+    //grid[robot.y_coor][robot.x_coor] = rep;
 }
 
 function checkBoundaries() {
@@ -141,6 +141,10 @@ function sensors(objective) {
 
 function exec(instruction, lineno) {
     let success = true;
+    
+    if (instruction === "" || instruction[0] === '/'){
+    	return { 'success': success, 'index': lineno };
+    }
 
     instruction = instruction.replace(/\t/g, ' ');
     let instData = instruction.split(' ');
@@ -324,7 +328,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 3) {
                     if (memory.getRegister(instData[1], false)) {
                         if (checkBoundaries() && sensors('O') !== 1) {
-                            grid[robot.y_coor][robot.x_coor] = '.';
+                            //grid[robot.y_coor][robot.x_coor] = '.';
                             robot.move(memory.registers[instData[1]]);
                             drawRobot();
                         } else {
@@ -334,7 +338,7 @@ function exec(instruction, lineno) {
                         }
                     } else if (!isNaN(instData[1])) {
                         if (checkBoundaries() && sensors('O') !== 1) {
-                            grid[robot.y_coor][robot.x_coor] = '.';
+                            //grid[robot.y_coor][robot.x_coor] = '.';
                             robot.move(Number(instData[1]));
                             drawRobot();
                         } else {
@@ -464,7 +468,7 @@ function exec(instruction, lineno) {
                     } else {
                         AddTetxtConsole("Checking out of bounds.");
                         console.log("Checking out of bounds.");
-                        success = false;
+                        //success = false;
                     }
                 } else {
                     AddTetxtConsole("Error in line " + lineno + ": " + "No match for ObOb function with " + instData.length + " arguments.");
@@ -479,7 +483,7 @@ function exec(instruction, lineno) {
                     } else {
                         AddTetxtConsole("Checking out of bounds.");
                         console.log("Checking out of bounds.");
-                        success = false;
+                        //success = false;
                     }
                 } else {
                     AddTetxtConsole();
@@ -494,7 +498,7 @@ function exec(instruction, lineno) {
                     } else {
                         AddTetxtConsole("Checking out of bounds.");
                         console.log("Checking out of bounds.");
-                        success = false;
+                        //success = false;
                     }
                 } else {
                     AddTetxtConsole("Error in line " + lineno + ": " + "No match for ObMe function with " + instData.length + " arguments.");
@@ -508,7 +512,7 @@ function exec(instruction, lineno) {
 
             //Outputs
             case 'Log':
-                if (instData.length < 2) {
+                if (instData.length < 3) {
                     if (memory.getRegister(instData[1], false)) {
                         AddTetxtConsole("Log: " + memory.registers[instData[1]]);
                     } else if (!isNaN(instData[1])) {
@@ -564,7 +568,7 @@ async function autorun() {
                 instruction_index = instructions.length;
             }
         }
-        await wait(500);
+        await wait(0);
     }
 }
 
@@ -601,9 +605,11 @@ function srcFileSelected(file) {
         logTA.value = '';
         instTA.value = '';
         instructions = file.data.split('\n');
-        instructions = instructions.filter((elem) => {
-            return elem !== "" && elem !== '/';
-        });
+        //instructions = instructions.filter((elem) => {
+        //    return elem[0] !== '/' && elem[0] !== '\n' && elem !== "";
+        //});
+        
+        console.log(instructions);
 
         for (let i = 0; i < instructions.length; i++) {
             if (instructions[i].includes('.')) {
@@ -619,8 +625,6 @@ function srcFileSelected(file) {
             }
         }
 
-        
-
     }
 }
 
@@ -632,12 +636,12 @@ const gridScreen = (gs) => {
         gs.background(0);
         for (let i = 0; i < grid.length; i++) {
             for (let j = 0; j < grid[0].length; j++) {
-                if (grid[i][j] === 'M') {
+                if (i === robot.y_coor && j === robot.x_coor) {
+                    gs.fill('blue');
+                } else if (grid[i][j] === 'M') {
                     gs.fill('red');
                 } else if (grid[i][j] === 'C') {
                     gs.fill('yellow');
-                } else if (grid[i][j] === '^' || grid[i][j] === '>' || grid[i][j] === 'v' || grid[i][j] === '<') {
-                    gs.fill('blue');
                 } else if (grid[i][j] == 'O') {
                     gs.fill('gray');
                 } else {
