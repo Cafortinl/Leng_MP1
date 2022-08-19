@@ -159,9 +159,9 @@ function exec(instruction, lineno) {
             instData = instData.slice(1);
         }
 
-        switch (instData[0]) {
+        switch (instData[0].toLowerCase()) {
             //Memory instructions
-            case 'SetT':
+            case 'sett':
                 if (instData.length < 4) {
                     success = memory.SetT(instData[1], instData[2]);
                 } else {
@@ -170,7 +170,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Copy':
+            case 'copy':
                 if (instData.length < 4) {
                     success = memory.Copy(instData[1], instData[2]);
                 } else {
@@ -179,7 +179,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Put':
+            case 'put':
                 if (instData.length < 3) {
                     success = memory.Put(instData[1]);
                 } else {
@@ -188,7 +188,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Take':
+            case 'take':
                 if (instData.length < 3) {
                     success = memory.Take(instData[1]);
                 } else {
@@ -199,7 +199,7 @@ function exec(instruction, lineno) {
                 break;
 
             //Arithmetic instructions
-            case 'Sum':
+            case 'sum':
                 if (instData.length < 4) {
                     success = memory.Sum(instData[1], instData[2]);
                 } else {
@@ -208,7 +208,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Res':
+            case 'res':
                 if (instData.length < 4) {
                     success = memory.Res(instData[1], instData[2]);
                 } else {
@@ -217,7 +217,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Mul':
+            case 'mul':
                 if (instData.length < 4) {
                     success = memory.Mult(instData[1], instData[2]);
                 } else {
@@ -225,7 +225,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Div':
+            case 'div':
                 if (instData.length < 4) {
                     success = memory.Div(instData[1], instData[2]);
                 } else {
@@ -236,7 +236,7 @@ function exec(instruction, lineno) {
                 break;
 
             //Flow control instructions
-            case 'Vaya':
+            case 'vaya':
                 if (instData.length < 3) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                 } else {
@@ -245,7 +245,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Comp':
+            case 'comp':
                 if (instData.length < 4) {
                     let retTuple = memory.Comp(instData[1], instData[2]);
                     success = retTuple['success'];
@@ -256,7 +256,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Vig':
+            case 'vig':
                 if (instData.length < 3) {
                     if (memory.registers['TF'] === 0) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
@@ -267,7 +267,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Vnig':
+            case 'vnig':
                 if (instData.length < 3) {
                     if (memory.registers['TF'] !== 0) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
@@ -278,7 +278,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Vma':
+            case 'vma':
                 if (instData.length < 3) {
                     if (memory.registers['TF'] === 1) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
@@ -289,7 +289,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Vmai':
+            case 'vmai':
                 if (instData.length < 3) {
                     if (memory.registers['TF'] >= 0) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
@@ -300,7 +300,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Vme':
+            case 'vme':
                 if (instData.length < 3) {
                     if (memory.registers['TF'] === -1) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
@@ -311,7 +311,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Vmei':
+            case 'vmei':
                 if (instData.length < 3) {
                     if (memory.registers['TF'] <= 0) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
@@ -324,7 +324,7 @@ function exec(instruction, lineno) {
                 break;
 
             //Action instructions
-            case 'Mov':
+            case 'mov':
                 if (instData.length < 3) {
                     if (memory.getRegister(instData[1], false)) {
                         if (checkBoundaries() && sensors('O') !== 1) {
@@ -357,7 +357,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Gir':
+            case 'gir':
                 if (instData.length < 3) {
                     if (memory.getRegister(instData[1], false)) {
                         robot.rotate(memory.registers[instData[1]]);
@@ -374,7 +374,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Car':
+            case 'car':
                 if (instData.length < 2) {
                     if (checkBoundaries() && sensors('C')) {
                         robot.is_loaded = true;
@@ -404,7 +404,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'Dcar':
+            case 'dcar':
                 if (instData.length < 2) {
                     if (checkBoundaries() && sensors('M')) {
                         switch (robot.dir) {
@@ -434,7 +434,7 @@ function exec(instruction, lineno) {
                 break;
 
             //Sensor instructions
-            case 'ObPX':
+            case 'obpX':
                 if (instData.length < 3) {
                     success = memory.SetT(instData[1], robot.x_coor);
                 } else {
@@ -443,7 +443,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'ObPY':
+            case 'obpy':
                 if (instData.length < 3) {
                     success = memory.SetT(instData[1], robot.y_coor);
                 } else {
@@ -452,7 +452,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'ObRT':
+            case 'obrt':
                 if (instData.length < 3) {
                     success = memory.SetT(instData[1], robot.dirs.indexOf(robot.dir) + 1);
                 } else {
@@ -461,7 +461,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'ObOb':
+            case 'obob':
                 if (instData.length < 3) {
                     if (checkBoundaries()) {
                         success = memory.SetT(instData[1], sensors('O'));
@@ -476,7 +476,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'ObMe':
+            case 'obme':
                 if (instData.length < 3) {
                     if (checkBoundaries()) {
                         success = memory.SetT(instData[1], sensors('C'));
@@ -491,7 +491,7 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'ObDs':
+            case 'obds':
                 if (instData.length < 3) {
                     if (checkBoundaries()) {
                         success = memory.SetT(instData[1], sensors('M'));
@@ -506,12 +506,12 @@ function exec(instruction, lineno) {
                     success = false;
                 }
                 break;
-            case 'ObCr':
+            case 'obcr':
                 success = memory.SetT(instData[1], robot.is_loaded ? 1 : 0);
                 break;
 
             //Outputs
-            case 'Log':
+            case 'log':
                 if (instData.length < 3) {
                     if (memory.getRegister(instData[1], false)) {
                         AddTetxtConsole("Log: " + memory.registers[instData[1]]);
