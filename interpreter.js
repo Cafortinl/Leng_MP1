@@ -165,7 +165,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 4) {
                     success = memory.SetT(instData[1], instData[2]);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for SetT function with " + instData.length + " arguments."); 
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for SetT function with " + instData.length + " arguments."); 
                     console.log("No match for SetT function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -174,7 +174,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 4) {
                     success = memory.Copy(instData[1], instData[2]);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Copy function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Copy function with " + instData.length + " arguments.");
                     console.log("No match for Copy function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -183,7 +183,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 3) {
                     success = memory.Put(instData[1]);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Put function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Put function with " + instData.length + " arguments.");
                     console.log("No match for Put function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -192,7 +192,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 3) {
                     success = memory.Take(instData[1]);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Take function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Take function with " + instData.length + " arguments.");
                     console.log("No match for Take function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -203,7 +203,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 4) {
                     success = memory.Sum(instData[1], instData[2]);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Sum function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Sum function with " + instData.length + " arguments.");
                     console.log("No match for Sum function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -212,7 +212,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 4) {
                     success = memory.Res(instData[1], instData[2]);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Res function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Res function with " + instData.length + " arguments.");
                     console.log("No match for Res function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -221,7 +221,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 4) {
                     success = memory.Mult(instData[1], instData[2]);
                 } else {
-                    console.log("Error in line " + lineno + ": " + "No match for Mul function with " + instData.length + " arguments.");
+                    console.log("Runtime error in line " + lineno+1 + ": " + "No match for Mul function with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
@@ -229,7 +229,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 4) {
                     success = memory.Div(instData[1], instData[2]);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Div function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Div function with " + instData.length + " arguments.");
                     console.log("No match for Div function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -240,7 +240,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 3) {
                     lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vaya function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Vaya function with " + instData.length + " arguments.");
                     console.log("No match for Vaya function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -251,7 +251,7 @@ function exec(instruction, lineno) {
                     success = retTuple['success'];
                     memory.SetT('TF', retTuple['comp']);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Comp function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Comp function with " + instData.length + " arguments.");
                     console.log("No match for Comp function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -262,7 +262,7 @@ function exec(instruction, lineno) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vig function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Vig function with " + instData.length + " arguments.");
                     console.log("No match for Vig function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -273,7 +273,7 @@ function exec(instruction, lineno) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vnig function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Vnig function with " + instData.length + " arguments.");
                     console.log("No match for Vnig function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -284,7 +284,7 @@ function exec(instruction, lineno) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vma function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Vma function with " + instData.length + " arguments.");
                     console.log("No match for Vma function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -295,7 +295,7 @@ function exec(instruction, lineno) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vmai function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Vmai function with " + instData.length + " arguments.");
                     console.log("No match for Vmai function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -306,7 +306,7 @@ function exec(instruction, lineno) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vme function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Vme function with " + instData.length + " arguments.");
                     console.log("No match for Vme function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -317,7 +317,7 @@ function exec(instruction, lineno) {
                         lineno = tagIndex[tags.indexOf(instData[1])] - 1;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Vmei function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Vmei function with " + instData.length + " arguments.");
                     console.log("No match for Vmei function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -332,7 +332,7 @@ function exec(instruction, lineno) {
                             robot.move(memory.registers[instData[1]]);
                             drawRobot();
                         } else {
-                            AddTetxtConsole('Error: the robot can\'t move to that position.');
+                            AddTetxtConsole('Runtime error: the robot can\'t move to that position.');
                             console.log('Error: the robot can\'t move to that position.');
                             success = false;
                         }
@@ -342,7 +342,7 @@ function exec(instruction, lineno) {
                             robot.move(Number(instData[1]));
                             drawRobot();
                         } else {
-                            AddTetxtConsole('Error: the robot can\'t move to that position.');
+                            AddTetxtConsole('Runtime error: the robot can\'t move to that position.');
                             console.log('Error: the robot can\'t move to that position.');
                             success = false;
                         }
@@ -352,7 +352,7 @@ function exec(instruction, lineno) {
                         success = false;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Mov function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Mov function with " + instData.length + " arguments.");
                     console.log("No match for Mov function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -369,7 +369,7 @@ function exec(instruction, lineno) {
                         success = false;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Gir instruction with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Gir instruction with " + instData.length + " arguments.");
                     console.log("No match for Gir instruction with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -394,12 +394,12 @@ function exec(instruction, lineno) {
                                 break;
                         }
                     } else {
-                        AddTetxtConsole("Error in line " + lineno + ": " + 'There is no object to load.');
+                        AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + 'There is no object to load.');
                         console.log('There is no object to load.');
                         success = false;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Car function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Car function with " + instData.length + " arguments.");
                     console.log("No match for Car function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -422,12 +422,12 @@ function exec(instruction, lineno) {
                                 break;
                         }
                     } else {
-                        AddTetxtConsole("Error in line " + lineno + ": " + 'Cannot unload robot in this place.');
+                        AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + 'Cannot unload robot in this place.');
                         console.log('Cannot unload robot in this place.');
                         success = false;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Dcar function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Dcar function with " + instData.length + " arguments.");
                     console.log("No match for Dcar function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -438,7 +438,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 3) {
                     success = memory.SetT(instData[1], robot.x_coor);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No mathc for ObPX function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No mathc for ObPX function with " + instData.length + " arguments.");
                     console.log("No mathc for ObPX function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -447,7 +447,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 3) {
                     success = memory.SetT(instData[1], robot.y_coor);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No mathc for ObPY function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No mathc for ObPY function with " + instData.length + " arguments.");
                     console.log("No mathc for ObPY function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -456,7 +456,7 @@ function exec(instruction, lineno) {
                 if (instData.length < 3) {
                     success = memory.SetT(instData[1], robot.dirs.indexOf(robot.dir) + 1);
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No mathc for ObRT function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No mathc for ObRT function with " + instData.length + " arguments.");
                     console.log("No mathc for ObRT function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -471,7 +471,7 @@ function exec(instruction, lineno) {
                         //success = false;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for ObOb function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for ObOb function with " + instData.length + " arguments.");
                     console.log("No match for ObOb function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -487,7 +487,7 @@ function exec(instruction, lineno) {
                     }
                 } else {
                     AddTetxtConsole();
-                    console.log("Error in line " + lineno + ": " + "No match for ObMe function with " + instData.length + " arguments.");
+                    console.log("Runtime error in line " + lineno+1 + ": " + "No match for ObMe function with " + instData.length + " arguments.");
                     success = false;
                 }
                 break;
@@ -501,7 +501,7 @@ function exec(instruction, lineno) {
                         //success = false;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for ObMe function with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for ObMe function with " + instData.length + " arguments.");
                     console.log("No match for ObMe function with " + instData.length + " arguments.");
                     success = false;
                 }
@@ -523,7 +523,7 @@ function exec(instruction, lineno) {
                         success = false;
                     }
                 } else {
-                    AddTetxtConsole("Error in line " + lineno + ": " + "No match for Log instruction with " + instData.length + " arguments.");
+                    AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + "No match for Log instruction with " + instData.length + " arguments.");
                     console.log("No match for Gir instruction with " + instData.length + " arguments.");
                     success = false;
                 }
