@@ -1,0 +1,13 @@
+Mov 1
+Gir -1
+Car
+Gir -1
+Mov 1
+Gir 1
+Mov 1
+Mov 1
+Dcar
+SetT T1 1
+tag1. Sum T0 T1
+Comp T0 10
+Vme tag1

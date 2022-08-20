@@ -38,9 +38,11 @@ class Memory{
 
     Take(dest){
         if(this.validation.test(dest)){
-            this.registers[dest] = this.peek();
-            this.stack.pop();
-            return true;
+            if (this.stack.length > 0) {
+                this.registers[dest] = this.peek();
+                this.stack.pop();
+                return true;
+            }
         }else{
             return false;
         }

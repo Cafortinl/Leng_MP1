@@ -9,14 +9,11 @@ let instruction_index;
 let log_i;
 let logTA;
 let instTA;
-
-let robot_sprites = [];
-let cargo_sprite;
-let obstacle_sprite;
 let objective_sprite;
 
 function mapFileSelected(file) {
     grid = []; //Clearing map matrix
+    loadedImages = true;
 
     let metadata = "";
     let contents;
@@ -66,6 +63,7 @@ function mapFileSelected(file) {
                 }
                 str_i++;
             }
+            AddTetxtCode('');
         } else {
             AddTetxtConsole('The selected map file is not compatible.');
         }
@@ -90,7 +88,7 @@ function drawRobot() {
             rep = '<';
             break;
     }
-    //grid[robot.y_coor][robot.x_coor] = rep;
+    return rep;
 }
 
 function checkBoundaries() {
@@ -426,6 +424,7 @@ function exec(instruction, lineno) {
                                 grid[robot.y_coor][robot.x_coor - 1] = 'C';
                                 break;
                         }
+                        robot.deload();
                     } else {
                         AddTetxtConsole("Runtime error in line " + lineno+1 + ": " + 'Cannot unload robot in this place.');
                         console.log('Cannot unload robot in this place.');
@@ -618,6 +617,8 @@ function AddTetxtConsole(newline_added){
 function  AddTetxtCode(linea_codigo) {
     instTA.value = 'Current instruction:\n';
     instTA.value += linea_codigo + '\n';
+    instTA.value += 'Robot direction: ' + drawRobot() + '\n';
+    instTA.value += 'Loaded: ' + (robot.is_loaded ? "true" : "false");
 }
 
 function srcFileSelected(file) {
@@ -632,9 +633,6 @@ function srcFileSelected(file) {
         logTA.value = '';
         instTA.value = '';
         instructions = file.data.split('\n');
-        //instructions = instructions.filter((elem) => {
-        //    return elem[0] !== '/' && elem[0] !== '\n' && elem !== "";
-        //});
         
         console.log(instructions);
 
@@ -656,6 +654,7 @@ function srcFileSelected(file) {
 }
 
 
+
 const gridScreen = (gs) => {
     gs.w = (gs.displayWidth / 2) - 90;
 
@@ -666,30 +665,21 @@ const gridScreen = (gs) => {
                 if (i === robot.y_coor && j === robot.x_coor) {
                     gs.fill('blue');
                 } else if (grid[i][j] === 'M') {
-                    gs.image(objective_sprite, j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
+                    gs.fill('red');
                 } else if (grid[i][j] === 'C') {
-                    gs.image(cargo_sprite, j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
+                    gs.fill('yellow');
                 } else if (grid[i][j] == 'O') {
-                    gs.image(obstacle_sprite, j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
+                    gs.fill('gray');
                 } else {
                     gs.fill(255);
-                    gs.rect(j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
                 }
+                gs.rect(j * gs.w / grid[0].length, i * gs.w / grid.length, gs.w / grid[0].length, gs.w / grid.length);
             }
         }
     };
 
     gs.preload = () => {
         memory = new Memory();
-        robot_sprites[0] = gs.loadImage('https://i.imgur.com/9h9pZ7f.png');
-        robot_sprites[1] = gs.loadImage('https://i.imgur.com/LgX3F8E.png');
-        robot_sprites[2] = gs.loadImage('https://i.imgur.com/3uETcuo.png');
-        robot_sprites[3] = gs.loadImage('https://i.imgur.com/IRqHEeY.png');
-        robot_sprites[4] = gs.loadImage('https://i.imgur.com/HLEpi5v.png');
-        robot_sprites[5] = gs.loadImage('https://i.imgur.com/8daZ1Jj.png');
-        obstacle_sprite = gs.loadImage('https://i.imgur.com/ifwy500.png');
-        objective_sprite = gs.loadImage('https://i.imgur.com/G4uwNGS.png');
-        cargo_sprite = gs.loadImage('https://i.imgur.com/n6OD4uk.png');
     };
 
     gs.setup = () => {

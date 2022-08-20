@@ -1,0 +1,167 @@
+Put 0
+Put 0
+Put 1
+Put 4
+Put 2
+Put 1
+Put 1
+Put 2
+Put 5
+Put 1
+Put -1
+Put 2
+Put 3
+Put 1
+Put 1
+Put 2
+Put -4
+Put 1
+Put 1
+Put 3
+Put 4
+Put 1
+Put 1
+Put 2
+Put 3
+Put 1
+Put 1
+Put 2
+Put 5
+Put 1
+Put -1
+Put 2
+Put 3
+Put 1
+Put 1
+Put 2
+Put -1
+Put 1
+Put 1
+Put 4
+Put 1
+Put 1
+Put 1
+Put 2
+Put 3
+Put 1
+Put 1
+Put 2
+Put 5
+Put 1
+Put -1
+Put 2
+Put 4
+Put 1
+Put 1
+Put 2
+Put -4
+Put 1
+Put 1
+Put 3
+Put 4
+Put 1
+Put 1
+Put 2
+Put 4
+Put 1
+Put 1
+Put 2
+Put 5
+Put 1
+Put -1
+Put 2
+Put 3
+Put 1
+Put 1
+Put 2
+Put -3
+Put 1
+Put 1
+Put 4
+Put 3
+Put 1
+Put 1
+Put 2
+Put 3
+Put 1
+Put 1
+Put 2
+Put 5
+Put 1
+Put -1
+Put 2
+Put 5
+Put 1
+Put 1
+Put 2
+Put -4
+Put 1
+Put 1
+Put 3
+Put 4
+Put 1
+Put 1
+Put 2
+Put 5
+Put 1
+Put -1
+Put 2
+Put 5
+Put 1
+
+SetT T2 1
+SetT T0 -1
+SetT T1 0
+
+Vaya stts
+
+rset. SetT T0 -1
+Vaya stts
+
+tt0. Take T0
+Take T1
+Vaya stts
+
+tt1. Take T1
+Vaya stts
+
+stts. Comp T0 -1
+Vig tt0
+Comp T0 0
+Vig end
+Comp T1 0
+Vig rset
+Comp T0 1
+Vig move
+Comp T0 2
+Vig girar
+Comp T0 3
+Vig carga
+Comp T0 4
+Vig dcarg
+
+iter. Comp T1 0
+Vma dec
+Vme sum
+
+move. Mov T1
+Vaya iter
+
+dec. Res T1 T2
+Vaya stts
+
+sum. Sum T1 T2
+Vaya stts
+
+girar. Gir T1
+Vaya iter
+
+carga. Car
+SetT T1 0
+Vaya stts
+
+dcarg. Dcar
+SetT T1 0
+Vaya stts
+
+end. Log 0
